@@ -57,7 +57,6 @@ function ST7735S() {
         var spi=options.spi, dc=options.dc, ce=options.cs, rst=options.rst;
         var g = {};
         g.clear = function() {
-            g.linebuf.fill(0);
             ce.reset();
             spi.write(0x2A,dc);
             spi.write(0,XOFF,0,LCD_WIDTH+XOFF-1);
