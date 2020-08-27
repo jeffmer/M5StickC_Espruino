@@ -1,2 +1,2 @@
 # M5StickC_Espruino
- Easpruino SW for ESP32 M5StickC
+ Espruino SW for ESP32 M5StickC
