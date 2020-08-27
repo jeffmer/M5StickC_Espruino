@@ -56,7 +56,6 @@ function ST7735S() {
     function connect(options) {
         var spi=options.spi, dc=options.dc, ce=options.cs, rst=options.rst;
         var g = {};
-        g.linebuf = new Uint16Array(LCD_WIDTH*16);
         g.clear = function() {
             g.linebuf.fill(0);
             ce.reset();
@@ -65,9 +64,9 @@ function ST7735S() {
             spi.write(0x2B,dc);
             spi.write(0,YOFF,0,LCD_HEIGHT+YOFF-1);
             spi.write(0x2C,dc);
-            var lines = 16; // size of buffer to use for un-paletting
+            var b = new Uint16Array(LCD_WIDTH*16);
             for (var y=0;y<LCD_HEIGHT;y+=16) {
-                spi.write(g.linebuf.buffer);
+                spi.write(b.buffer);
             }
             ce.set();
         };
