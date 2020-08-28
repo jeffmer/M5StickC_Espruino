@@ -4,14 +4,16 @@ Modified by Juergen Skrotzky alias Jorgen (JorgenVikingGod@gmail.com)
 Updated for use in M5StickC by Jeff Magee
  */
 
-function ST7735S(colorPalette) {
+function ST7735S() {
     var LCD_WIDTH = 80;
     var LCD_HEIGHT = 160;
     var XOFF = 26;
     var YOFF = 1;
     var INV = 1;
+    var CHUNKSIZE = 1280;
+    var MAXCHUNK = 10;
 
-    function dispinit(spi, dc, ce, rst, callback) {
+    function dispinit(spi, dc, ce, rst,fn) {
         function cmd(c,d) {
             dc.reset();
             spi.write(c, ce);
@@ -48,49 +50,56 @@ function ST7735S(colorPalette) {
                 cmd(0xE1,[0x03,0x1d,0x07,0x06,0x2E,0x2C,0x29,0x2D,0x2E,0x2E,0x37,0x3F,0x00,0x00,0x02,0x10]); //ST7735_GMCTRN1: color and gamma correction
                 cmd(0x13); //ST7735_NORON: Set Normal display on, no args, w/delay: 10 ms delay
                 cmd(0x29); //ST7735_DISPON: Set Main screen turn on, no args w/delay: 100 ms delay
-                if (callback) callback();
+                fn();
             },10);
         } ,100);
     }
 
-    function connect(options, callback) {
-        var palette = options.palette, spi=options.spi, dc=options.dc, ce=options.cs, rst=options.rst;
-        if (options.height) LCD_HEIGHT=options.height;
-        var bits;
-        if (palette.length>16) bits=8;
-        else if (palette.length>4) bits=4;
-        else if (palette.length>2) bits=2;
-        else bits=1;
-        var g = Graphics.createArrayBuffer(LCD_WIDTH, LCD_HEIGHT, bits, { msb:true });
-        g.linebuf = new Uint16Array(LCD_WIDTH*16);
-        g.myclear = function() {
-            g.linebuf.fill(0);
+    function connect(options , callback) {
+        var spi=options.spi, dc=options.dc, ce=options.cs, rst=options.rst;
+        var g = {};
+        g.chunkbuf = new Uint16Array(CHUNKSIZE);
+        g.clear = function() {
+            g.chunkbuf.fill(0);
             ce.reset();
             spi.write(0x2A,dc);
             spi.write(0,XOFF,0,LCD_WIDTH+XOFF-1);
             spi.write(0x2B,dc);
             spi.write(0,YOFF,0,LCD_HEIGHT+YOFF-1);
             spi.write(0x2C,dc);
-            var lines = 16; // size of buffer to use for un-paletting
-            for (var y=0;y<LCD_HEIGHT;y+=16) {
-                spi.write(g.linebuf.buffer);
+            var b = new Uint16Array(LCD_WIDTH*16);
+            for (var i=0;i<MAXCHUNK;++i) {
+                spi.write(g.chunkbuf.buffer);
             }
             ce.set();
         };
-        g.flip = function() {
+        g.drawImage = function(img,x,y) {
+            x += XOFF; 
+            y += YOFF;
+            var x1 = x + img.width - 1; 
+            var y1 = y + img.height - 1;
             ce.reset();
             spi.write(0x2A,dc);
-            spi.write(0,XOFF,0,LCD_WIDTH+XOFF-1);
+            spi.write(0,x,0,x1);
             spi.write(0x2B,dc);
-            spi.write(0,YOFF,0,LCD_HEIGHT+YOFF-1);
+            spi.write(0,y,0,y1);
             spi.write(0x2C,dc);
-            for (var y=0;y<LCD_HEIGHT;y+=16) {
-                E.mapInPlace(new Uint8Array(g.buffer, y*LCD_WIDTH*bits/8, g.linebuf.length), g.linebuf, palette, bits);
-                spi.write(g.linebuf.buffer);
+            var chunks = Math.floor((img.height*img.width)/CHUNKSIZE);
+            var remnt  = (img.height*img.width)%CHUNKSIZE;
+            if (chunks>0){       
+                for (var i=0;i<chunks;++i) {
+                    E.mapInPlace(new Uint8Array(img.buffer, i*CHUNKSIZE*img.bpp/8, CHUNKSIZE),g.chunkbuf, img.palette, img.bpp);
+                    spi.write(g.chunkbuf.buffer);
+                }
             }
+            if (remnt>0){
+                var b =new Uint16Array(remnt);        
+                E.mapInPlace(new Uint8Array(img.buffer, chunks*CHUNKSIZE*img.bpp/8, remnt), b, img.palette, img.bpp);
+                spi.write(b.buffer);
+            }      
             ce.set();
         };
-        dispinit(spi, dc, ce, rst, callback);
+        dispinit(spi, dc, ce, rst, ()=>{g.clear();});
         return g;
     }
 
@@ -98,22 +107,30 @@ function ST7735S(colorPalette) {
     SPI1.setup({sck:D13, mosi:D15, baud: 4000000});
 
     return connect({
-        palette:colorPalette,
         spi:SPI1,
         dc:D23,
         cs:D5,
         rst:D18
-        }, function() {
-            g.clear();
-            g.setRotation(0);
-            g.setColor(3);
-            g.drawString("Hello",10,10);
-            g.setColor(2);
-            g.setFontVector(20);
-            g.drawString("M5C Espruino",10,30);
-            g.flip();
-    });
+        });
 }
 
-M5C.backlight(1);
-var g = ST7735S(new Uint16Array([0, 0x03E0, 0x00F1, 0xFFFF]));
+M5C.brightness(10);
+M5C.backlight(1)
+
+function message() {
+    var pal1color = new Uint16Array([0x0000,0xFFFF]);
+    var buf = Graphics.createArrayBuffer(10,110,1,{msb:true});
+    buf.setRotation(3);
+    buf.setColor(1);
+    buf.setFont("6x8");
+    buf.drawString("M5Stick-C Espruino");
+    g.drawImage({width:10,height:110,bpp:1,buffer:buf.buffer, palette:pal1color},35,30);
+    if (M5C.BTNB.read()){
+        if (require("Storage").read("app.js"))
+            eval(require("Storage").read("app.js"));
+    }      
+}
+
+var g = ST7735S();
+setTimeout(message,200);
+
