@@ -80,11 +80,23 @@ function ST7735S() {
             spi.write(0x2B,dc);
             spi.write(0,y,0,y1);
             spi.write(0x2C,dc);
-            var b =new Uint16Array(img.width*16);
-            for (var i=0;i<img.height;i+=16) {
-                E.mapInPlace(new Uint8Array(img.buffer, i*img.width*img.bpp/8, img.width*16), b, img.palette, img.bpp);
-                spi.write(b.buffer);
+            var b;
+            var chunks = Math.floor(img.height/16);
+            var remnt  = img.height % 16;
+            if (chunks>0){
+                b =new Uint16Array(img.width*16);        
+                for (var i=0;i<chunks;++i) {
+                    E.mapInPlace(new Uint8Array(img.buffer, i*img.width*img.bpp*16/2, img.width*16), b, img.palette, img.bpp);
+                    spi.write(b.buffer);
+                }
             }
+            if (remnt>0){
+                b =new Uint16Array(img.width*remnt);        
+                for (var i=0;i<chunks;++i) {
+                    E.mapInPlace(new Uint8Array(img.buffer, chunks*img.width*img.bpp*16/2, img.width*remnt), b, img.palette, img.bpp);
+                    spi.write(b.buffer);
+                }
+            }      
             ce.set();
         };
         dispinit(spi, dc, ce, rst,()=>{g.clear();});
