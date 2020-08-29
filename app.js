@@ -6,7 +6,7 @@ buf.setColor(1);
 buf.setFont("6x8");
 
 function drawbuf(x,y){
-   lcd.drawImage({width:10,height:64,bpp:1,buffer:buf.buffer, palette:pal1color},x,y);
+   lcd.drawImage({width:10,height:60,bpp:1,buffer:buf.buffer, palette:pal1color},x,y);
    buf.clear();
 }
 
@@ -17,13 +17,23 @@ function draw() {
    drawbuf(0,100);
 }
 
-setInterval(draw,2);
+// display incrementing number
+var pal2color = new Uint16Array([0x0000,0xE007]);
+var buf2 = Graphics.createArrayBuffer(20,64,1,{msb:true});
+buf2.setRotation(3);
+buf2.setColor(1);
+buf2.setFont("Vector",20);
 
-var ssid = '';
-var password = '';
+var N = 0;
+function drawNumber() {
+   buf2.drawString(N,0,0);
+   lcd.drawImage({width:20,height:64,bpp:1,buffer:buf2.buffer, palette:pal2color},30,50);
+   buf2.clear();
+   ++N;
+   if (N>999) N = 0;
+}
 
-var wifi = require('Wifi');
-wifi.connect(ssid, {password: password}, function() {
-    console.log('Connected to Wifi.  IP address is:', wifi.getIP().ip);
-    //wifi.save(); // Next reboot will auto-connect
-});
+lcd.clear();
+setInterval(draw,2000);
+setInterval(drawNumber,200);
+

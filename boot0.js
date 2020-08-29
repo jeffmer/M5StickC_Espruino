@@ -47,7 +47,8 @@ global.M5C = {
             I2C1.writeTo(0x34, 0x12, buf & ~0x04);
     },
     brightness:(b) => {
-       b = b>12?12:b;
+       b = b<0?0:b>1?1:b;
+       b = Math.floor(b*10)+2;
        I2C1.writeTo(0x34, 0x28);
        var buf = I2C1.readFrom(0x34, 0x28, 1)[0];
        I2C1.writeTo(0x34, 0x28 , ((buf & 0x0f) | (b << 4)) );

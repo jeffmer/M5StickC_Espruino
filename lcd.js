@@ -104,7 +104,7 @@ function ST7735S() {
     }
 
     //var spi = new SPI();
-    SPI1.setup({sck:D13, mosi:D15, baud: 4000000});
+    SPI1.setup({sck:D13, mosi:D15, baud: 20000000});
 
     return connect({
         spi:SPI1,
@@ -114,7 +114,7 @@ function ST7735S() {
         });
 }
 
-M5C.brightness(10);
+M5C.brightness(0.8);
 M5C.backlight(1)
 
 function message() {
@@ -124,7 +124,7 @@ function message() {
     buf.setColor(1);
     buf.setFont("6x8");
     buf.drawString("M5Stick-C Espruino");
-    g.drawImage({width:10,height:110,bpp:1,buffer:buf.buffer, palette:pal1color},35,30);
+    lcd.drawImage({width:10,height:110,bpp:1,buffer:buf.buffer, palette:pal1color},35,30);
     if (M5C.BTNB.read()){
         if (require("Storage").read("app.js"))
             eval(require("Storage").read("app.js"));
