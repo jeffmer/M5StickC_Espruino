@@ -19,8 +19,8 @@ function draw() {
 
 setInterval(draw,2);
 
-var ssid = 'mageenet';
-var password = 'brandog10';
+var ssid = '';
+var password = '';
 
 var wifi = require('Wifi');
 wifi.connect(ssid, {password: password}, function() {
