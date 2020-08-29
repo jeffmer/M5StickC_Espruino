@@ -18,3 +18,12 @@ function draw() {
 }
 
 setInterval(draw,2);
+
+var ssid = 'mageenet';
+var password = 'brandog10';
+
+var wifi = require('Wifi');
+wifi.connect(ssid, {password: password}, function() {
+    console.log('Connected to Wifi.  IP address is:', wifi.getIP().ip);
+    //wifi.save(); // Next reboot will auto-connect
+});
