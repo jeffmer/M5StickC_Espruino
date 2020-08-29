@@ -57,48 +57,14 @@ function ST7735S() {
 
     function connect(options , callback) {
         var spi=options.spi, dc=options.dc, ce=options.cs, rst=options.rst;
-        var g = {};
-        g.chunkbuf = new Uint16Array(CHUNKSIZE);
-        g.clear = function() {
-            g.chunkbuf.fill(0);
-            ce.reset();
-            spi.write(0x2A,dc);
-            spi.write(0,XOFF,0,LCD_WIDTH+XOFF-1);
-            spi.write(0x2B,dc);
-            spi.write(0,YOFF,0,LCD_HEIGHT+YOFF-1);
-            spi.write(0x2C,dc);
-            var b = new Uint16Array(LCD_WIDTH*16);
-            for (var i=0;i<MAXCHUNK;++i) {
-                spi.write(g.chunkbuf.buffer);
-            }
-            ce.set();
-        };
-        g.drawImage = function(img,x,y) {
-            x += XOFF; 
-            y += YOFF;
-            var x1 = x + img.width - 1; 
-            var y1 = y + img.height - 1;
-            ce.reset();
-            spi.write(0x2A,dc);
-            spi.write(0,x,0,x1);
-            spi.write(0x2B,dc);
-            spi.write(0,y,0,y1);
-            spi.write(0x2C,dc);
-            var chunks = Math.floor((img.height*img.width)/CHUNKSIZE);
-            var remnt  = (img.height*img.width)%CHUNKSIZE;
-            if (chunks>0){       
-                for (var i=0;i<chunks;++i) {
-                    E.mapInPlace(new Uint8Array(img.buffer, i*CHUNKSIZE*img.bpp/8, CHUNKSIZE),g.chunkbuf, img.palette, img.bpp);
-                    spi.write(g.chunkbuf.buffer);
-                }
-            }
-            if (remnt>0){
-                var b =new Uint16Array(remnt);        
-                E.mapInPlace(new Uint8Array(img.buffer, chunks*CHUNKSIZE*img.bpp/8, remnt), b, img.palette, img.bpp);
-                spi.write(b.buffer);
-            }      
-            ce.set();
-        };
+        var g = lcd_spi_unbuf.connect(options.spi, {
+            dc: options.dc,
+            cs: options.cs,
+            height: LCD_HEIGHT,
+            width: LCD_WIDTH,
+            colstart: XOFF,
+            rowstart: YOFF
+        });
         dispinit(spi, dc, ce, rst, ()=>{g.clear();});
         return g;
     }
@@ -113,8 +79,6 @@ function ST7735S() {
         rst:D18
         });
 }
-
-function swap16(x) { return ((x & 0xFF) << 8)|((x >> 8) & 0xFF);}
 
 M5C.brightness(0.8);
 M5C.backlight(1)

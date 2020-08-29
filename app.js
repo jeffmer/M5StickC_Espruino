@@ -18,7 +18,7 @@ function draw() {
 }
 
 // display incrementing number
-var pal2color = new Uint16Array([0x0000,0xE007]);
+var pal2color = new Uint16Array([0x0000,0xF100]);//.map(swap16);
 var buf2 = Graphics.createArrayBuffer(20,64,1,{msb:true});
 buf2.setRotation(3);
 buf2.setColor(1);
@@ -35,5 +35,19 @@ function drawNumber() {
 
 lcd.clear();
 setInterval(draw,2000);
-setInterval(drawNumber,200);
+
+var iRef;
+var started = false;
+setWatch(()=>
+   {
+      if (!started){
+      iRef = setInterval(drawNumber,100);
+      started = true;
+      } else {
+         if(iRef) clearInterval(iRef);
+         started = false;
+      }
+   },M5C.BTNA,{repeat:true,edge:-1,debounce:200});
+
+
 
