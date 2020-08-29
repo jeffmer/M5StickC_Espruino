@@ -6,7 +6,7 @@ buf.setColor(1);
 buf.setFont("6x8");
 
 function drawbuf(x,y){
-   g.drawImage({width:10,height:64,bpp:1,buffer:buf.buffer, palette:pal1color},x,y);
+   lcd.drawImage({width:10,height:64,bpp:1,buffer:buf.buffer, palette:pal1color},x,y);
    buf.clear();
 }
 

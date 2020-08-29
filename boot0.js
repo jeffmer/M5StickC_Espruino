@@ -72,8 +72,7 @@ global.M5C = {
 
 initAXP192();
 
-if (M5C.BTNB.read()){
-  M5C.backlight(1);
+if (require("Storage").read("lcd.js")){
   eval(require("Storage").read("lcd.js"));
 }
 
