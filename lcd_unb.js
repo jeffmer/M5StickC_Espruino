@@ -72,12 +72,7 @@ function ST7735S() {
     //var spi = new SPI();
     SPI1.setup({sck:D13, mosi:D15, baud: 20000000});
 
-    return connect({
-        spi:SPI1,
-        dc:D23,
-        cs:D5,
-        rst:D18
-        });
+    return connect({spi:SPI1, dc:D23, cs:D5, rst:D18 });
 }
 
 M5C.brightness(0.8);

@@ -106,12 +106,7 @@ function ST7735S() {
     //var spi = new SPI();
     SPI1.setup({sck:D13, mosi:D15, baud: 20000000});
 
-    return connect({
-        spi:SPI1,
-        dc:D23,
-        cs:D5,
-        rst:D18
-        });
+    return connect({spi:SPI1, dc:D23, cs:D5, rst:D18 });
 }
 
 function swap16(x) { return ((x & 0xFF) << 8)|((x >> 8) & 0xFF);}
