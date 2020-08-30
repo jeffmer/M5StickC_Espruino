@@ -85,10 +85,9 @@ function ST7735S() {
                     spi.write(g.chunkbuf.buffer);
                 }
             }
-            if (remnt>0){
-                var b =new Uint16Array(remnt);        
-                E.mapInPlace(new Uint8Array(img.buffer, chunks*CHUNKSIZE*img.bpp/8, remnt), b, img.palette, img.bpp);
-                spi.send(b.buffer);
+            if (remnt>0){     
+                E.mapInPlace(new Uint8Array(img.buffer, chunks*CHUNKSIZE*img.bpp/8, remnt), g.chunkbuf, img.palette, img.bpp);
+                spi.write(new Int8Array(g.chunkbuf.buffer,0,remnt*2));
             }      
             ce.set();
         };
