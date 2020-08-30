@@ -50,7 +50,7 @@ global.M5C = {
        b = b<0?0:b>1?1:b;
        b = Math.floor(b*10)+2;
        I2C1.writeTo(0x34, 0x28);
-       var buf = I2C1.readFrom(0x34, 0x28, 1)[0];
+       var buf = I2C1.readFrom(0x34,1)[0];
        I2C1.writeTo(0x34, 0x28 , ((buf & 0x0f) | (b << 4)) );
     },
     batV:() => {
@@ -74,7 +74,25 @@ global.M5C = {
 initAXP192();
 
 if (require("Storage").read("lcd.js")){
-  eval(require("Storage").read("lcd.js"));
+    eval(require("Storage").read("lcd.js"));
+    
+    M5C.brightness(0.8);
+    var lcd = ST7735S();
+    
+    setTimeout(() => {
+        var pal1color = new Uint16Array([0x0000,0xFFFF]);
+        var buf = Graphics.createArrayBuffer(10,110,1,{msb:true});
+        buf.setRotation(3);
+        buf.setColor(1);
+        buf.setFont("6x8");
+        buf.drawString("M5Stick-C Espruino");
+        lcd.drawImage({width:10,height:110,bpp:1,buffer:buf.buffer, palette:pal1color},35,30);
+        M5C.backlight(1);
+        if (M5C.BTNB.read()){
+            if (require("Storage").read("app.js"))
+                eval(require("Storage").read("app.js"));
+        }      
+    },200);
 }
 
 
