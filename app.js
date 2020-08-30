@@ -18,16 +18,16 @@ function draw() {
 }
 
 // display incrementing number
-var pal2color = new Uint16Array([0x0000,0xF100]);//.map(swap16);
-var buf2 = Graphics.createArrayBuffer(20,64,1,{msb:true});
+var pal2color = new Uint16Array([0x001F,0xFFFF]).map(swap16);
+var buf2 = Graphics.createArrayBuffer(20,100,1,{msb:true});
 buf2.setRotation(3);
 buf2.setColor(1);
 buf2.setFont("Vector",20);
 
 var N = 0;
 function drawNumber() {
-   buf2.drawString(N,0,0);
-   lcd.drawImage({width:20,height:64,bpp:1,buffer:buf2.buffer, palette:pal2color},30,50);
+   buf2.drawString(N,20,0);
+   lcd.drawImage({width:20,height:100,bpp:1,buffer:buf2.buffer, palette:pal2color},30,30);
    buf2.clear();
    ++N;
    if (N>999) N = 0;
