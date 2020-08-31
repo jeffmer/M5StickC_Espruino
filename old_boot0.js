@@ -101,24 +101,20 @@ if (require("Storage").read("lcd.js")){
     var lcd = ST7735S();
     
     setTimeout(() => {
-        lcd.setRotation(3);
-        lcd.setColor(0xFFFF);
-        lcd.setFont("6x8");
-        lcd.drawString("M5Stick-C Espruino",25,30);
-        lcd d = new Date();
-        lcd.drawString(d.toString().substr(0,15),25,40);
+        var pal1color = new Uint16Array([0x0000,0xFFFF]);
+        var buf = Graphics.createArrayBuffer(20,110,1,{msb:true});
+        buf.setRotation(3);
+        buf.setColor(1);
+        buf.setFont("6x8");
+        buf.drawString("M5Stick-C Espruino",0,0);
+        var d = new Date();
+        buf.drawString(d.toString().substr(0,24),0,10);
+        lcd.drawImage({width:20,height:110,bpp:1,buffer:buf.buffer, palette:pal1color},30,30);
         M5C.backlight(1);
         if (M5C.BTNB.read()){
             if (require("Storage").read("app.js"))
                 eval(require("Storage").read("app.js"));
-        } else {
-            setInterval(()=>{
-                var d = new Date();
-                lcd.drawString(d.toString().substr(16,24),110,0,true);
-                lcd.drawString(M5C.batV().toFixed(1)+"V",130,70,true);
-                lcd.drawString(M5C.batA().toFixed(1)+"ma   ",0,70,true);              
-            },1000);
-        }     
+        }      
     },200);
 }
 
