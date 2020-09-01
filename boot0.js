@@ -21,12 +21,12 @@ var AXP192 = {
        var buf = AXP192.readByte(0x28);
        AXP192.writeByte(0x28 , ((buf & 0x0f) | (b << 4)) );
     },
-    deepSleep:(usec)=>{
+    deepSleep:(usec,pin)=>{
         AXP192.writeByte(0x31 , AXP192.readByte(0x31) | ( 1 << 3));
         AXP192.writeByte(0x90 , AXP192.readByte(0x90) | 0x07);
         AXP192.writeByte(0x82, 0x00);
         AXP192.writeByte(0x12, AXP192.readByte(0x12) & 0xA1);
-        ESP32.deepSleep(usec);
+        ESP32.deepSleep(usec,pin);
     },
     batV:() => {
         I2C1.writeTo(0x34,0x78);
