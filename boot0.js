@@ -105,7 +105,7 @@ if (require("Storage").read("lcd.js")){
         lcd.setColor(0xFFFF);
         lcd.setFont("6x8");
         lcd.drawString("M5Stick-C Espruino",25,30);
-        lcd d = new Date();
+        var d = new Date();
         lcd.drawString(d.toString().substr(0,15),25,40);
         M5C.backlight(1);
         if (M5C.BTNB.read()){
@@ -114,7 +114,7 @@ if (require("Storage").read("lcd.js")){
         } else {
             setInterval(()=>{
                 var d = new Date();
-                lcd.drawString(d.toString().substr(16,24),110,0,true);
+                lcd.drawString(d.toString().split(" ")[4],110,0,true);
                 lcd.drawString(M5C.batV().toFixed(1)+"V",130,70,true);
                 lcd.drawString(M5C.batA().toFixed(1)+"ma   ",0,70,true);              
             },1000);

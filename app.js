@@ -6,6 +6,7 @@ buf.setColor(1);
 buf.setFont("6x8");
 
 function drawbuf(x,y){
+   lcd.setRotation(0);
    lcd.drawImage({width:10,height:60,bpp:1,buffer:buf.buffer, palette:pal1color},x,y);
    buf.clear();
 }
@@ -27,6 +28,7 @@ buf2.setFont("Vector",20);
 var N = 0;
 function drawNumber() {
    buf2.drawString(N,20,0);
+   lcd.setRotation(0);
    lcd.drawImage({width:20,height:100,bpp:1,buffer:buf2.buffer, palette:pal2color},30,30);
    buf2.clear();
    ++N;

@@ -74,3 +74,5 @@ function ST7735S() {
 
     return connect({spi:SPI1, dc:D23, cs:D5, rst:D18 });
 }
+
+function swap16(x) { return x;}
