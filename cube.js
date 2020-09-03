@@ -1,12 +1,20 @@
+//Rotating Cube adapted from pixl.js conference badge
 
-var pal1color = new Uint16Array([0x0000,0xFFFF]);
+lcd.clear();
+lcd.setRotation(3);
+lcd.setColor(0xFFFF);
+lcd.setFont("6x8");
+lcd.drawString("ROTATING",10,20);
+lcd.drawString("CUBE",10,40);
+
+var pal1color = new Uint16Array([0x0000,0x07FF]);
 var g = Graphics.createArrayBuffer(80,80,1,{msb:true});
 g.setRotation(0);
 g.setColor(1);
 
 function flip(){
    lcd.setRotation(0);
-   lcd.drawImage({width:80,height:80,bpp:1,buffer:buf.buffer, palette:pal1color},0,0).flip();
+   lcd.drawImage({width:80,height:80,bpp:1,buffer:g.buffer, palette:pal1color},0,0).flip();
    g.clear();
 }
 // rotation
@@ -26,8 +34,8 @@ function draw() {
     t = y*rcx + z*rsx;
     z = z*rcx - y*rsx;
     y=t;
-    z += 4;
-    return [40 + 40*x/z, 40 + 40*y/z];
+    z+=8;
+    return [40 + 120*x/z, 40 + 120*y/z];
   }
 
   var a,b;
@@ -73,12 +81,12 @@ function step() {
   flip();
 }
 
-var iRef;
-var started = false;
+var iRef = setInterval(step,100);
+var started = true;
 setWatch(()=>
    {
       if (!started){
-      iRef = setInterval(step,200);
+      iRef = setInterval(step,100);
       started = true;
       } else {
          if(iRef) clearInterval(iRef);

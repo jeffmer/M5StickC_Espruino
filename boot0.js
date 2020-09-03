@@ -94,6 +94,13 @@ if (require("Storage").read("rtc.js")){
     rtc.setSYS(); //set systemclock from Real-Time Clock;
 }
 
+function loadapp(){
+    clearInterval();
+    lcd.clear();
+    if (require("Storage").read("app.js"))
+        eval(require("Storage").read("app.js"));
+}
+
 if (require("Storage").read("lcd.js")){
     eval(require("Storage").read("lcd.js"));
     
@@ -108,17 +115,13 @@ if (require("Storage").read("lcd.js")){
         var d = new Date();
         lcd.drawString(d.toString().substr(0,15),25,40);
         M5C.backlight(1);
-        if (M5C.BTNB.read()){
-            if (require("Storage").read("app.js"))
-                eval(require("Storage").read("app.js"));
-        } else {
-            setInterval(()=>{
-                var d = new Date();
-                lcd.drawString(d.toString().split(" ")[4],110,0,true);
-                lcd.drawString(M5C.batV().toFixed(1)+"V",130,70,true);
-                lcd.drawString(M5C.batA().toFixed(1)+"ma   ",0,70,true);              
-            },1000);
-        }     
+        setInterval(()=>{
+            var d = new Date();
+            lcd.drawString(d.toString().split(" ")[4],110,0,true);
+            lcd.drawString(M5C.batV().toFixed(1)+"V",130,70,true);
+            lcd.drawString(M5C.batA().toFixed(1)+"ma   ",0,70,true);  
+            if (!M5C.BTNB.read())loadapp();           
+        },1000);  
     },200);
 }
 
