@@ -8,8 +8,8 @@ function ST7789() {
     var LCD_WIDTH = 240;
     var LCD_HEIGHT = 240;
     var XOFF = 0;
-    var YOFF = 0;
-    var INV = 1;
+    var YOFF = 80;
+    var INVERSE = 1;
 
     function dispinit(spi, dc, ce, rst,fn) {
         function cmd(c,d) {
@@ -26,7 +26,7 @@ function ST7789() {
         } else {
             cmd(0x01); //ST7735_SWRESET: Software reset, 0 args, w/delay: 150 ms delay
         }
-        setTimeout(function() 
+        setTimeout(function() {
         cmd(0x11); //SLPOUT
         setTimeout(function() {
             //MADCTL: Set Memory access control (directions), 1 arg: row addr/col addr, bottom to top refresh
@@ -67,7 +67,7 @@ function ST7789() {
             cmd(0x13);
             //TFT_DISPON: Set Main screen turn on, no args w/delay: 100 ms delay
             cmd(0x29);
-            if (callback) callback();
+            if (fn) fn();
           }, 50);
           }, 120);
     }
@@ -92,3 +92,10 @@ function ST7789() {
 
     return connect({spi:SPI1, dc:D27, cs:D5});
 }
+
+//screen brightness function
+function brightness(v) {
+    v<0?0:v>1?1:v;
+    analogWrite(D12,v);
+}
+
