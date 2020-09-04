@@ -45,7 +45,7 @@ To run an *app* such as the cube application displayed above upload your javascr
 
 **lcd** - this global variable is an Espruino Graphics object representing the  M5StickC's  LCD screen.
 
-With no rotation, coordinate (0,0) is at the top left of the screen with the device oriented as in the pictures above. Optimum performance for image buffer rendering is achieved  with no rotation of `lcd`, however rotation within an image buffer has no effect on graphics performance.  The LCD driver does use some buffering, so call `lcd.flip()` after graphics operations to ensure your entire image is displayed.
+With no rotation, coordinate (0,0) is at the top right of the screen with the device oriented as in the pictures above. Optimum performance for image buffer rendering is achieved  with no rotation of `lcd`, however rotation within an image buffer has no effect on graphics performance.  The LCD driver does use some buffering, so call `lcd.flip()` after graphics operations to ensure your entire image is displayed.
 
 ### Real-time clock
 The M5StickC contains an RTC chip which maintains the current time and date when the device is shutdown. However, you should access time as usual in Espruino using the standard `Date` class. For reference:-
