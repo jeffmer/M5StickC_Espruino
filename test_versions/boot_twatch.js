@@ -48,7 +48,7 @@ var AXP202 = {
     } ,
     init:() =>{
         AXP202.setCharge(300); // 300 ma is max  charge
-        AXP202.setLD02(1); //lcd power on
+        AXP202.setLD02(1); //g power on
         AXP202.setExten(0);
     }
 }
@@ -64,21 +64,21 @@ if (require("Storage").read("rtc.js")){
 
 if (require("Storage").read("lcd.js")){
     eval(require("Storage").read("lcd.js"));
-    var lcd = ST7789();
+    var g = ST7789();
     brightness(0.5);
     setTimeout(() => {
-        lcd.setRotation(0);
-        lcd.setColor(0xFFFF);
-        lcd.setFont("6x8");
-        lcd.drawString("T-Watch 2020 Espruino",20,100);
+        g.setRotation(0);
+        g.setColor(0xFFFF);
+        g.setFont("6x8");
+        g.drawString("T-Watch 2020 Espruino",20,100);
         var d = new Date();
-        lcd.drawString(d.toString().substr(0,15),20,120);
-        lcd.flip();
+        g.drawString(d.toString().substr(0,15),20,120);
+        g.flip();
         setInterval(()=>{
             var d = new Date();
-            lcd.drawString(d.toString().split(" ")[4],190,0,true);
-            lcd.drawString(AXP202.batV().toFixed(1)+"V",210,230,true);
-            lcd.drawString(AXP202.batA().toFixed(1)+"ma   ",0,230,true);           
+            g.drawString(d.toString().split(" ")[4],190,0,true);
+            g.drawString(AXP202.batV().toFixed(1)+"V",210,230,true);
+            g.drawString(AXP202.batA().toFixed(1)+"ma   ",0,230,true);           
         },1000); 
     },200);
 }
