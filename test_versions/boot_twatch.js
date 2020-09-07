@@ -55,11 +55,14 @@ var AXP202 = {
 
 AXP202.init();
 
-
 if (require("Storage").read("rtc.js")){
     eval(require("Storage").read("rtc.js"));
     var rtc = RTC();
     rtc.setSYS(); //set systemclock from Real-Time Clock;
+}
+
+if (require("Storage").read("touch.js")){
+    eval(require("Storage").read("touch.js"));
 }
 
 if (require("Storage").read("lcd.js")){
@@ -74,12 +77,18 @@ if (require("Storage").read("lcd.js")){
         var d = new Date();
         g.drawString(d.toString().substr(0,15),20,120);
         g.flip();
-        setInterval(()=>{
-            var d = new Date();
-            g.drawString(d.toString().split(" ")[4],190,0,true);
-            g.drawString(AXP202.batV().toFixed(1)+"V",210,230,true);
-            g.drawString(AXP202.batA().toFixed(1)+"ma   ",0,230,true);           
-        },1000); 
+        if (!TOUCH_PIN.read()){
+            setInterval(()=>{
+                var d = new Date();
+                g.drawString(d.toString().split(" ")[4],190,0,true);
+                g.drawString(AXP202.batV().toFixed(1)+"V",210,230,true);
+                g.drawString(AXP202.batA().toFixed(1)+"ma   ",0,230,true);           
+            },1000); 
+        } else {
+            if (require("Storage").read("app.js")){
+                eval(require("Storage").read("app.js"));
+            }
+        }
     },200);
 }
 
