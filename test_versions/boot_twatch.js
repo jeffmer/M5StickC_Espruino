@@ -17,6 +17,7 @@ var AXP202 = {
     setLD02:(state) => {return AXP202.setPower(2,state);},
     setExten:(state) => {return AXP202.setPower(0,state);},
     setDCDC2:(state) => {return AXP202.setPower(4,state);},
+    setLD04:(state) => {return AXP202.setPower(3,state);},
     setCharge:(ma) => {
         var val = AXP202.readByte(0x33);
         val &= 0b11110000;
@@ -64,6 +65,7 @@ var AXP202 = {
         AXP202.setLD02(1); //g power on
         AXP202.setExten(0);
         AXP202.setDCDC2(0);
+        AXP202.setLD04(0);
         AXP202.adc1Enable(0xCD,true);
     }
 }
