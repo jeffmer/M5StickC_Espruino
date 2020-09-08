@@ -16,12 +16,24 @@ var AXP202 = {
     },
     setLD02:(state) => {return AXP202.setPower(2,state);},
     setExten:(state) => {return AXP202.setPower(0,state);},
+    setDCDC2:(state) => {return AXP202.setPower(4,state);},
     setCharge:(ma) => {
         var val = AXP202.readByte(0x33);
         val &= 0b11110000;
         ma -= 300;
         val |= (ma / 100);
         AXP202.writeByte(0x33, val);
+    },
+    setLEDoff:() => {
+        var val = AXP202.readByte(0x32);
+        val &= 0b11001111;
+        val |= 0x08;
+        AXP202.writeByte(0x32, val);
+    },
+    adc1Enable:(mask,en)=>{
+        var val = AXP202.readByte(0x82);
+        val = en? val|mask : val & ~mask;
+        AXP202.writeByte(0x82,val);
     },
     deepSleep:(usec,pin)=>{
         ESP32.deepSleep(usec,pin);
@@ -47,9 +59,12 @@ var AXP202 = {
         return AXP202.batChargeA() - AXP202.batDisChargeA();
     } ,
     init:() =>{
+        AXP202.setLEDoff();
         AXP202.setCharge(300); // 300 ma is max  charge
         AXP202.setLD02(1); //g power on
         AXP202.setExten(0);
+        AXP202.setDCDC2(0);
+        AXP202.adc1Enable(0xCD,true);
     }
 }
 
