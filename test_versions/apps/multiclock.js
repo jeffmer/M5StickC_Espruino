@@ -31,7 +31,7 @@ function startdraw() {
   face.init();
   intervalRefSec = setInterval(face.tick,1000);
   widbat();
-  setInterval(widbat,4500);
+  setInterval(widbat,10000);
 }
 
 function setButtons(){
@@ -51,6 +51,7 @@ startdraw();
 setButtons();
 
 setTimeout(()=>{
+    g.clear();
     AXP202.setLD02(0);
     ESP32.deepSleep(0,D38,0);
 },20000);

@@ -87,14 +87,14 @@ if (require("Storage").read("lcd.js")){
     var g = ST7789();
     brightness(0.5);
     setTimeout(() => {
-        g.setRotation(0);
-        g.setColor(0xFFFF);
-        g.setFont("6x8");
-        g.drawString("T-Watch 2020 Espruino",20,100);
-        var d = new Date();
-        g.drawString(d.toString().substr(0,15),20,120);
-        g.flip();
         if (!TOUCH_PIN.read()){
+            g.setRotation(0);
+            g.setColor(0xFFFF);
+            g.setFont("6x8");
+            g.drawString("T-Watch 2020 Espruino",20,100);
+            var d = new Date();
+            g.drawString(d.toString().substr(0,15),20,120);
+            g.flip();
             setInterval(()=>{
                 var d = new Date();
                 g.drawString(d.toString().split(" ")[4],190,0,true);
