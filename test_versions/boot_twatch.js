@@ -75,7 +75,7 @@ AXP202.init();
 if (require("Storage").read("rtc.js")){
     eval(require("Storage").read("rtc.js"));
     var rtc = RTC();
-    rtc.setSYS(); //set systemclock from Real-Time Clock;
+    //rtc.setSYS(); //set systemclock from Real-Time Clock;
 }
 
 if (require("Storage").read("touch.js")){
@@ -87,6 +87,7 @@ if (require("Storage").read("lcd.js")){
     var g = ST7789();
     brightness(0.5);
     setTimeout(() => {
+        if (rtc) rtc.setSYS(); //set systemclock from Real-Time Clock;
         if (!TOUCH_PIN.read()){
             g.setRotation(0);
             g.setColor(0xFFFF);
